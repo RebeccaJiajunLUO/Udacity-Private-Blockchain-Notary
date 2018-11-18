@@ -53,17 +53,17 @@ Below is an instruction of how to use Postman to test the endpoints:
 #### GET
 1. Get the information of a block by height
 
-![Image of GET method to get the info of a block](https://github.com/chuanqin3/Udacity-Blockchain-with-NodeJS/blob/master/InstructionPictures/get-block-intro.png)
+![Image of GET method to get the info of a block](https://github.com/chuanqin3/Udacity-Private-Blockchain-Notary/blob/master/InstructionPictures/get-block-intro.png)
 
 #### POST
 1. Post a new block to the chain
 
-![Image of POST method to create a new block](https://github.com/chuanqin3/Udacity-Blockchain-with-NodeJS/blob/master/InstructionPictures/post-block-intro.png)
+![Image of POST method to create a new block](https://github.com/chuanqin3/Udacity-Private-Blockchain-Notary/blob/master/InstructionPictures/post-block-intro.png)
 
 2. Request validation for an address
 
 ![Image of POST method to request a validation]
-(https://github.com/chuanqin3/Udacity-Blockchain-with-NodeJS/blob/master/InstructionPictures/post-request-validation-intro.png)
+(https://github.com/chuanqin3/Udacity-Private-Blockchain-Notary/blob/master/InstructionPictures/post-request-validation-intro.png)
 
 ## Testing simpleChain.js
 
