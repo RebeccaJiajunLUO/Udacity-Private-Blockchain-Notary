@@ -62,8 +62,7 @@ Below is an instruction of how to use Postman to test the endpoints:
 
 2. Request validation for an address
 
-![Image of POST method to request a validation]
-(https://github.com/chuanqin3/Udacity-Private-Blockchain-Notary/blob/master/InstructionPictures/post-request-validation-intro.png)
+![Image of POST method to request a validation](https://github.com/chuanqin3/Udacity-Private-Blockchain-Notary/blob/master/InstructionPictures/post-request-validation-intro.png)
 
 ## Testing simpleChain.js
 
