@@ -62,7 +62,19 @@ Below is an instruction of how to use Postman to test the endpoints:
 
 2. Request validation for an address
 
-![Image of POST method to request a validation](https://github.com/chuanqin3/Udacity-Private-Blockchain-Notary/blob/master/InstructionPictures/post-request-validation-intro.png)
+Step 1) Install Electrum Wallet and copy the receiving address:
+![Image of POST method to request a validation](https://github.com/chuanqin3/Udacity-Private-Blockchain-Notary/blob/master/InstructionPictures/post-request-validation-intro-1.png)
+
+Step 2) Go to Postman and paste your receiving address in the body of request and click 'Send'
+
+![Image of POST method to request a validation](https://github.com/chuanqin3/Udacity-Private-Blockchain-Notary/blob/master/InstructionPictures/post-request-validation-intro-2.png)
+
+Step 3) Copy the `message` from the JSON output and use Electrum Wallet to sign this message
+
+![Image of POST method to request a validation](https://github.com/chuanqin3/Udacity-Private-Blockchain-Notary/blob/master/InstructionPictures/post-request-validation-intro-3.png)
+
+Step 4) Copy the `Signature` and paste into the body of a request to `/message-signature/validate`
+
 
 ## Testing simpleChain.js
 
