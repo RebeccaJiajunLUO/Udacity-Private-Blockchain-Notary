@@ -18,22 +18,27 @@ class ValidationController {
    */
   requestValidation() {
     this.app.post("/requestValidation", async (req, res) => {
-      // retrieve the address from request
-      const address = req.body.address;
-
-      const timeStamp = new Date().getTime().toString().slice(0, -3);
-      let messageToSign = null;
-
       try {
-        messageToSign = address + `:` + timeStamp + `:starRegistry`
-        res.json(messageToSign)
+        // retrieve the address from request
+        const address = req.body.address;
+        if (!address) {
+          res.status(400).json({
+            success: false,
+            message: "Please check your request, which might be empty, undefined, or in a wrong format."
+          })
+        } else {
+          const timeStamp = new Date().getTime().toString().slice(0, -3);
+          let messageToSign = null;
+          messageToSign = address + `:` + timeStamp + `:starRegistry`
+          res.json(messageToSign)
+        }
       } catch (error) {
         res.status(404).json({
           success: false,
           message: `Validation request failed. Error: ${error}`
         })
       }
-    })
+    });
   }
 
 }
