@@ -60,6 +60,11 @@ Below is an instruction of how to use Postman to test the endpoints:
 
 ![Image of POST method to create a new block](https://github.com/chuanqin3/Udacity-Blockchain-with-NodeJS/blob/master/InstructionPictures/post-block-intro.png)
 
+2. Request validation for an address
+
+![Image of POST method to request a validation]
+(https://github.com/chuanqin3/Udacity-Blockchain-with-NodeJS/blob/master/InstructionPictures/post-request-validation-intro.png)
+
 ## Testing simpleChain.js
 
 To test code:
