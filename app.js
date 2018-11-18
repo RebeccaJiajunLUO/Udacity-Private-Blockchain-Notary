@@ -2,10 +2,10 @@
 const express = require("express");
 //Importing BodyParser.js module
 const bodyParser = require("body-parser");
-// Importing Block class
-const Block = require('./Block.js')
-// Importing Blockchain class
-const Blockchain = require('./simpleChain.js')
+// // Importing Block class
+// const Block = require('./Block.js')
+// // Importing Blockchain class
+// const Blockchain = require('./simpleChain.js')
 
 /**
  * Class Definition for the REST API
