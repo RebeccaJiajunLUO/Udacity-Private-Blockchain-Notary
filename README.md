@@ -1,6 +1,6 @@
-# Private Blockchain
+# Private Blockchain Star Notary Service
 
-Blockchain has the potential to change the way that the world approaches data. Develop Blockchain skills by understanding the data model behind Blockchain by developing your own simplified private blockchain.
+A service that allows users to claim ownership of their favorite star in the night sky. It is the 4th project for Udacity's Blockchain Nanodegree program.
 
 ## Getting Started
 
