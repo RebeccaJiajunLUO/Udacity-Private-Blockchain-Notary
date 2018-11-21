@@ -67,7 +67,7 @@ Step 1) Install Electrum Wallet and copy the receiving address:
 
 Step 2) Go to Postman and paste your receiving address in the body of request and click 'Send'
 
-![Image of POST method to request a validation](https://github.com/chuanqin3/Udacity-Private-Blockchain-Notary/blob/master/InstructionPictures/post-request-validation-intro-2.png)
+![Image of POST method to request a validation](https://github.com/chuanqin3/Udacity-Private-Blockchain-Notary/blob/master/InstructionPictures/post-request-validation-intro-4.png)
 
 Step 3) Copy the `message` from the JSON output and use Electrum Wallet to sign this message
 
