@@ -10,7 +10,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 Installing Node.js and NPM is pretty straightforward using the installer package available from the (Node.js® web site)[https://nodejs.org/en/].
 
-Node.js framework: **Express.js**[https://expressjs.com/]
+Built with **Express.js** [https://expressjs.com/]
 
 ### Configuring your project
 
@@ -35,13 +35,15 @@ npm install express --save
 ```
 npm install hex2ascii --save
 ```
+- Install bitcoinjs-message with --save flag
 ```
 npm i bitcoinjs-message --save
 ```
+- Install bitcoinjs-lib with --save flag
 ```
 npm i bitcoinjs-lib --save OR npm i --ignore-scripts bitcoinjs-lib --save
 ```
-## Testing Node.js server
+## Running the tests
 To start the server:
 ```
 node app.js
@@ -88,3 +90,11 @@ Step 3) Copy the `message` from the JSON output and use Electrum Wallet to sign 
 Step 4) Copy the `Signature`, `address`, and `message`, then paste them into the body of a request to `/message-signature/validate`
 
 ![Image of POST method to request a validation](https://github.com/chuanqin3/Udacity-Private-Blockchain-Notary/blob/master/InstructionPictures/post-request-validation-intro-5.png)
+
+## License
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+
+## Acknowledgments
+* Udacity Blockchain Nanodegree Program facilitators and mentors
+* Google
+* Express.js documentation
