@@ -149,7 +149,7 @@ class ValidationController {
       try {
         // define the star information that will be written into block
         let script = req.body
-        script.star.story = Buffer(script.star.story).toString('hex')
+
         // Check if there is any content. No content no new block
         if (!script) {
           res.status(400).json({
@@ -157,14 +157,31 @@ class ValidationController {
             message: "Please check your request, which might be empty, undefined, or in a wrong format."
           })
         } else {
-          // add new block to the chain
-          let newBlock = new Block(script)
-          await blockchain.addBlock(newBlock)
+          // verify if the address has passed the validation earlier
+          let addressVerified = false;
+          this.mempoolValid.forEach((each) => {
+            if (script.address === each.status.address) {
+              addressVerified = true;
+            }
+          })
 
-          // return the block just added
-          // note: in response we have to add a storyDecoded which won't be saved into the blockchain
-          newBlock.body.star.storyDecoded = hex2ascii(script.star.story)
-          res.status(201).send(newBlock)
+          if (addressVerified) {
+            // hex coded the story
+            script.star.story = Buffer(script.star.story).toString('hex')
+            // add new block to the chain
+            let newBlock = new Block(script)
+            await blockchain.addBlock(newBlock)
+
+            // return the block just added
+            // note: in response we have to add a storyDecoded which won't be saved into the blockchain
+            newBlock.body.star.storyDecoded = hex2ascii(script.star.story)
+            res.status(201).send(newBlock)
+            } else {
+              res.status(400).json({
+                success: false,
+                message: `Your address is not valid. Please go to \requestValidation to start the process.`
+              })
+            }
           }
       } catch (error) {
         res.status(400).json({

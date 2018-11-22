@@ -30,7 +30,7 @@ class BlockController {
           block.body.star.storyDecoded = hex2ascii(block.body.star.story)
           res.send(block)
         } else {
-          res.status(404).json({
+          res.status(400).json({
             success: false,
             message: `Block ${req.params.height} is not found.`
           })
