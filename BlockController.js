@@ -1,5 +1,3 @@
-const SHA256 = require('crypto-js/sha256');
-const Block = require('./Block.js');
 const Blockchain = require('./Blockchain.js');
 const blockchain = new Blockchain();
 const hex2ascii = require('hex2ascii');
@@ -83,7 +81,6 @@ class BlockController {
         const block = await blockchain.getBlockByAddress(req.params.address)
         if (block) {
           // add the star story decoded to ascii
-          // block.body.star.storyDecoded = hex2ascii(block.body.star.story)
           res.send(block)
         } else {
           res.status(400).json({

@@ -1,5 +1,3 @@
-const SHA256 = require('crypto-js/sha256');
-const bitcoin = require('bitcoinjs-lib');
 const Block = require('./Block.js');
 const Blockchain = require('./Blockchain.js');
 const blockchain = new Blockchain();
@@ -17,7 +15,6 @@ class ValidationController {
    */
   constructor(app) {
     this.app = app;
-    this.blocks = [];
     this.mempool = {};
     this.mempoolValid = [];
     this.requestValidation();
@@ -53,7 +50,6 @@ class ValidationController {
           // if in Mempool, compare the timestamp. If elapsed time is less than 5 mins, do nothing and return the same messageToSign
           // if not in Mempool, add it to the mempool and issue a new messageToSign
           let timeElapsed = (new Date().getTime().toString().slice(0,-3)) - this.mempool[walletAddress];
-          // let requestExpired = timeElapsed - TimeoutRequestsWindowTime
 
           let messageToSign = null;
           let timeLeft = null;
@@ -64,6 +60,7 @@ class ValidationController {
           } else {
             // add address to the mempool
             this.mempool[walletAddress] = requestTimeStamp
+            // remove the address from mempool after 5 minutes
             setTimeout(() => {
               delete this.mempool[walletAddress]
             }, TimeoutRequestsWindowTime*1000);
@@ -97,12 +94,11 @@ class ValidationController {
         const { message, walletAddress, signature } = req.body;
 
         // verify if the request is in the mempool by wallet address, and then verify signature
-        console.log(this.mempool)
         let inMempool =  this.mempool.hasOwnProperty(walletAddress)
         let isValid = null;
         let requestTimeStamp = null;
         let result = null;
-        if (inMempool) {
+        if (inMempool) { // address found in the mempool
           requestTimeStamp = this.mempool[walletAddress]
           isValid = bitcoinMessage.verify(message, walletAddress, signature);
           if (isValid) { // the signature is valid
@@ -117,8 +113,6 @@ class ValidationController {
               }
             }
             this.mempoolValid.push(result)
-            console.log(this.mempoolValid)
-
           } else { // the signature is not valid
             result = {
               registerStar: false,
@@ -126,7 +120,7 @@ class ValidationController {
             }
           }
           res.json(result)
-        } else {
+        } else { // address not found in the mempool
           res.status(404).json({
             success: false,
             message: `Please go to \requestValidation to get a message that you need to sign with your wallet.`

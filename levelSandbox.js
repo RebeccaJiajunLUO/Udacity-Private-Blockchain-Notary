@@ -79,7 +79,7 @@ function getBlockByHash(hash) {
   });
 }
 
-// Get block by address
+// Get block by address; it may return multiple blocks
 function getBlockByAddress(address) {
   let blocks = [];
   let block = null;
@@ -98,7 +98,6 @@ function getBlockByAddress(address) {
     })
     .on('close', function () {
       // resolve with the count value
-      console.log('blocks: '+blocks)
       resolve(blocks)
     });
   });
