@@ -16,10 +16,12 @@ class BlockController {
   constructor(app) {
     this.app = app;
     this.getBlockByHeight();
+    this.getStarByHash();
+    this.getStarByAddress();
   }
 
   /**
-   * Implement a GET Endpoint to retrieve a block by index, url: "/block/:index"
+   * Implement a GET Endpoint to retrieve a block by height, url: "/block/:height"
    */
   getBlockByHeight() {
     this.app.get("/block/:height", async (req, res) => {
@@ -42,6 +44,42 @@ class BlockController {
         })
       }
     });
+  }
+
+  /**
+   * Implement a GET Endpoint to retrieve a block by hash, url: "/stars/hash::hash"
+   * note: use two semicolons because single semicolon will cause a semicolon prefix to the hash
+   */
+  getStarByHash() {
+    this.app.get("/stars/hash::hash", async (req, res) => {
+      try {
+        const hash = req.params.hash
+        res.send(hash)
+      } catch (error) {
+        res.status(404).json({
+          success: false,
+          message: `Failed to find the block by hash. Error: ${error}`
+        })
+      }
+    })
+  }
+
+  /**
+   * Implement a GET Endpoint to retrieve a block by hash, url: "/stars/address::address"
+   * note: use two semicolons because single semicolon will cause a semicolon prefix to the address
+   */
+  getStarByAddress() {
+    this.app.get("/stars/address::address", async (req, res) => {
+      try {
+        const address = req.params.address
+        res.send(address)
+      } catch (error) {
+        res.status(404).json({
+          success: false,
+          message: `Failed to find the block by hash. Error: ${error}`
+        })
+      }
+    })
   }
 }
 
