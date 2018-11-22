@@ -53,8 +53,17 @@ class BlockController {
   getStarByHash() {
     this.app.get("/stars/hash::hash", async (req, res) => {
       try {
-        const hash = req.params.hash
-        res.send(hash)
+        const block = await blockchain.getBlockByHash(req.params.hash)
+        if (block) {
+          // add the star story decoded to ascii
+          block.body.star.storyDecoded = hex2ascii(block.body.star.story)
+          res.send(block)
+        } else {
+          res.status(400).json({
+            success: false,
+            message: `Block with hash: ${req.params.hash} is not found.`
+          })
+        }
       } catch (error) {
         res.status(404).json({
           success: false,

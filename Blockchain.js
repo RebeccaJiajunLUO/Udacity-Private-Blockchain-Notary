@@ -65,7 +65,7 @@ class Blockchain {
     }
   }
 
-  // get block data
+  // get block data by height
   async getBlock(blockHeight) {
     try {
       let block = await db.getLevelDBData(blockHeight)
@@ -82,6 +82,15 @@ class Blockchain {
       return await db.getBlockchainHeight()
     } catch(err) {
       console.log('Having error with getting blockchain height. Error: '+err);
+    }
+  }
+
+  // get block by hash
+  async getBlockByHash(hash) {
+    try {
+      return await db.getBlockByHash(hash);
+    } catch(err) {
+      console.log('Having error with getting block by hash. Error: '+err);
     }
   }
 

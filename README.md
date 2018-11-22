@@ -51,13 +51,17 @@ The sever will run on http://localhost:8000/
 ### Endpoints
 Below is an instruction of how to use Postman to test the endpoints:
 #### GET
-1. Get the information of a block by height
+1. Get a block by height
 
 Example #1
-![Image of GET method to get the info of a block](https://github.com/chuanqin3/Udacity-Private-Blockchain-Notary/blob/master/InstructionPictures/get-block-intro.png)
+![Image of GET method to get the info of a block by height](https://github.com/chuanqin3/Udacity-Private-Blockchain-Notary/blob/master/InstructionPictures/get-block-intro.png)
 
 Example #2
-![Image of GET method to get the info of a block](https://github.com/chuanqin3/Udacity-Private-Blockchain-Notary/blob/master/InstructionPictures/get-block-by-height.png)
+![Image of GET method to get the info of a block by height](https://github.com/chuanqin3/Udacity-Private-Blockchain-Notary/blob/master/InstructionPictures/get-block-by-height.png)
+
+2. Get a block by hash
+
+![Image of GET method to get the info of a block by hash](https://github.com/chuanqin3/Udacity-Private-Blockchain-Notary/blob/master/InstructionPictures/get-block-by-hash.png)
 
 #### POST
 1. Register a new star's information in the chain

@@ -41,7 +41,7 @@ function getBlockchainHeight() {
   return new Promise(function(resolve, reject) {
     db.createReadStream()
     .on('data', function (data) {
-      // count each object isnerted
+      // count each object inserted
       height = height + 1
     })
     .on('error', function (err) {
@@ -57,24 +57,29 @@ function getBlockchainHeight() {
 }
 
 // Get block by hash
-async function getBlockByHash(hash) {
+function getBlockByHash(hash) {
   let block = null;
-  await db.createReadStream()
+  return new Promise(function(resolve, reject) {
+    db.createReadStream()
     .on('data', function (data) {
-      if (data.hash === hash) {
-        block = data;
+      if (JSON.parse(data.value).hash === hash) {
+        block = JSON.parse(data.value)
       }
     })
     .on('error', function (err) {
-      return console.log('Unable to read data stream!', err);
+      // reject with error
+      console.log('Oh my!', err)
     })
     .on('close', function () {
-      return block;
+      // resolve with the count value
+      resolve(block)
     });
+  });
 }
 
 module.exports = {
   getLevelDBData,
   addBlocktoChain,
   getBlockchainHeight,
+  getBlockByHash,
 }

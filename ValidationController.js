@@ -167,7 +167,7 @@ class ValidationController {
 
           if (addressVerified) {
             // hex coded the story
-            script.star.story = Buffer(script.star.story).toString('hex')
+            script.star.story = new Buffer.from(script.star.story).toString('hex')
             // add new block to the chain
             let newBlock = new Block(script)
             await blockchain.addBlock(newBlock)
