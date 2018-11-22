@@ -63,6 +63,10 @@ Example #2
 
 ![Image of GET method to get the info of a block by hash](https://github.com/chuanqin3/Udacity-Private-Blockchain-Notary/blob/master/InstructionPictures/get-block-by-hash.png)
 
+3. Get blocks by address
+
+![Image of GET method to get the info of a block by hash](https://github.com/chuanqin3/Udacity-Private-Blockchain-Notary/blob/master/InstructionPictures/get-blocks-by-address.png)
+
 #### POST
 1. Register a new star's information in the chain
 

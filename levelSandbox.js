@@ -1,3 +1,5 @@
+const hex2ascii = require('hex2ascii');
+
 /* ===== Persist data with LevelDB ===================================
 |  Learn more: level: https://github.com/Level/level     |
 |  =============================================================*/
@@ -77,9 +79,35 @@ function getBlockByHash(hash) {
   });
 }
 
+// Get block by address
+function getBlockByAddress(address) {
+  let blocks = [];
+  let block = null;
+  return new Promise(function(resolve, reject) {
+    db.createReadStream()
+    .on('data', function (data) {
+      block = JSON.parse(data.value)
+      if (block.body.address === address) {
+        block.body.star.storyDecoded = hex2ascii(block.body.star.story)
+        blocks.push(block)
+      }
+    })
+    .on('error', function (err) {
+      // reject with error
+      console.log('Oh my!', err)
+    })
+    .on('close', function () {
+      // resolve with the count value
+      console.log('blocks: '+blocks)
+      resolve(blocks)
+    });
+  });
+}
+
 module.exports = {
   getLevelDBData,
   addBlocktoChain,
   getBlockchainHeight,
   getBlockByHash,
+  getBlockByAddress,
 }

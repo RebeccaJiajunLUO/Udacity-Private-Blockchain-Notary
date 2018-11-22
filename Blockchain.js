@@ -94,6 +94,15 @@ class Blockchain {
     }
   }
 
+  // get block by address
+  async getBlockByAddress(address) {
+    try {
+      return await db.getBlockByAddress(address);
+    } catch(err) {
+      console.log('Having error with gettiing block by address. Error: '+err)
+    }
+  }
+
   // validate block
   async validateBlock(blockHeight) {
     try {

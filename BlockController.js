@@ -80,12 +80,21 @@ class BlockController {
   getStarByAddress() {
     this.app.get("/stars/address::address", async (req, res) => {
       try {
-        const address = req.params.address
-        res.send(address)
+        const block = await blockchain.getBlockByAddress(req.params.address)
+        if (block) {
+          // add the star story decoded to ascii
+          // block.body.star.storyDecoded = hex2ascii(block.body.star.story)
+          res.send(block)
+        } else {
+          res.status(400).json({
+            success: false,
+            message: `Block with address: ${req.params.address} is not found.`
+          })
+        }
       } catch (error) {
         res.status(404).json({
           success: false,
-          message: `Failed to find the block by hash. Error: ${error}`
+          message: `Failed to find the block by address. Error: ${error}`
         })
       }
     })
