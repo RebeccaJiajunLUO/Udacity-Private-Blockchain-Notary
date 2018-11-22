@@ -92,7 +92,7 @@ Step 4) Copy the `Signature`, `address`, and `message`, then paste them into the
 ![Image of POST method to request a validation](https://github.com/chuanqin3/Udacity-Private-Blockchain-Notary/blob/master/InstructionPictures/post-request-validation-intro-5.png)
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
 ## Acknowledgments
 * Udacity Blockchain Nanodegree Program facilitators and mentors
