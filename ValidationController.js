@@ -39,12 +39,7 @@ class ValidationController {
         // If the user re-submits the same request, the app will return the same request that it is already in the mempool
         const TimeoutRequestsWindowTime = 5*60;
 
-        // this.timeoutRequests[walletAddress] = setTimeout(() => {
-        //   self.removeValidationRequest(walletAddress)
-        // }, TimeoutRequestsWindowTime);
-
-        // req.validationWindow = timeLeft;
-
+        // check if walletAddress from request is valid
         if (!walletAddress) {
           res.status(400).json({
             success: false,
@@ -55,14 +50,12 @@ class ValidationController {
           const requestTimeStamp = new Date().getTime().toString().slice(0, -3);
 
           // check if the request is in the mempool already
-          console.log(this.mempool)
           let inMempool =  this.mempool.hasOwnProperty(walletAddress)
-          console.log(inMempool)
 
           // if in Mempool, compare the timestamp. If elapsed time is less than 5 mins, do nothing and return the same messageToSign
           // if not in Mempool, add it to the mempool and issue a new messageToSign
           let timeElapsed = (new Date().getTime().toString().slice(0,-3)) - this.mempool[walletAddress];
-          let requestExpired = timeElapsed - TimeoutRequestsWindowTime
+          // let requestExpired = timeElapsed - TimeoutRequestsWindowTime
 
           let messageToSign = null;
           let timeLeft = null;
@@ -103,22 +96,35 @@ class ValidationController {
     this.app.post("/message-signature/validate", async (req, res) => {
       try {
         // parse information from the request body
-        const { address, signature } = req.body;
+        const { message, walletAddress, signature } = req.body;
 
-        let registerStar = null;
-        let status = {
-          walletAddress: address,
-          requestTimeStamp: null,
-          message: message,
-          validationWindow: null
+        // verify if the request is in the mempool by wallet address, and then verify signature
+        let inMempool =  this.mempool.hasOwnProperty(walletAddress)
+        let isValid = null;
+        let requestTimeStamp = null;
+        if (inMempool) {
+          requestTimeStamp = this.mempool[walletAddress]
+          isValid = bitcoinMessage.verify(message, walletAddress, signature);
+          res.json({
+            registerStar: true,
+            status: {
+              address: walletAddress,
+              requestTimeStamp: requestTimeStamp,
+              message: message,
+              validationWindow: 300,
+              messageSignature: true
+            }
+          })
+        } else {
+          res.status(404).json({
+            success: false,
+            message: `Please go to \requestValidation to get a message that you need to sign with your wallet.`
+          })
         }
-
-        // verify the message using Bitcoin Message package
-        const isValid = bitcoinMessage.verify(message, address, signature)
       } catch (error) {
         res.status(404).json({
           success: false,
-          message: `Failed to validate yoursignature. Error: ${error}`
+          message: `Failed to validate your signature. Error: ${error}`
         })
       }
     })

@@ -73,8 +73,9 @@ Step 3) Copy the `message` from the JSON output and use Electrum Wallet to sign 
 
 ![Image of POST method to request a validation](https://github.com/chuanqin3/Udacity-Private-Blockchain-Notary/blob/master/InstructionPictures/post-request-validation-intro-3.png)
 
-Step 4) Copy the `Signature` and paste into the body of a request to `/message-signature/validate`
+Step 4) Copy the `Signature`, `address`, and `message`, then paste them into the body of a request to `/message-signature/validate`
 
+![Image of POST method to request a validation](https://github.com/chuanqin3/Udacity-Private-Blockchain-Notary/blob/master/InstructionPictures/post-request-validation-intro-5.png)
 
 ## Testing simpleChain.js
 
