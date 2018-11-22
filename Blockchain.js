@@ -141,16 +141,4 @@ class Blockchain {
   }
 }
 
-// Pre-set the testing codes in Node REPL
-// let chain = new Blockchain();
-// (function theLoop (i) {
-//   setTimeout(async function () {
-//     let blockTest = new Block("Test Block - " + (i + 1));
-//     let result = await chain.addBlock(blockTest)
-//     console.log(result)
-//     i++;
-//     if (i < 10) theLoop(i);
-//   }, 1000);
-// })(0);
-
 module.exports = Blockchain

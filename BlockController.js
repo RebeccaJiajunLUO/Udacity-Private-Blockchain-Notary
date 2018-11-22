@@ -1,6 +1,6 @@
 const SHA256 = require('crypto-js/sha256');
 const Block = require('./Block.js');
-const Blockchain = require('./simpleChain.js');
+const Blockchain = require('./Blockchain.js');
 const blockchain = new Blockchain();
 
 /**
@@ -21,10 +21,10 @@ class BlockController {
   }
 
   /**
-   * Implement a GET Endpoint to retrieve a block by index, url: "/api/block/:index"
+   * Implement a GET Endpoint to retrieve a block by index, url: "/block/:index"
    */
   getBlockByHeight() {
-    this.app.get("/api/block/:height", async (req, res) => {
+    this.app.get("/block/:height", async (req, res) => {
       try {
         const block = await blockchain.getBlock(req.params.height)
         if (block) {
@@ -45,10 +45,10 @@ class BlockController {
   }
 
   /**
-   * Implement a POST Endpoint to add a new Block, url: "/api/block"
+   * Implement a POST Endpoint to add a new Block, url: "/block"
    */
   postNewBlock() {
-    this.app.post("/api/block", async (req, res) => {
+    this.app.post("/block", async (req, res) => {
       try {
         // define the string script that will be written into block
         const script = req.body.body
