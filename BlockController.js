@@ -2,6 +2,7 @@ const SHA256 = require('crypto-js/sha256');
 const Block = require('./Block.js');
 const Blockchain = require('./Blockchain.js');
 const blockchain = new Blockchain();
+const hex2ascii = require('hex2ascii')
 
 /**
  * Controller Definition to encapsulate routes to work with blocks
@@ -28,6 +29,8 @@ class BlockController {
       try {
         const block = await blockchain.getBlock(req.params.height)
         if (block) {
+          // add the star story decoded to ascii
+          block.body.star.storyDecoded = hex2ascii(block.body.star.story)
           res.send(block)
         } else {
           res.status(404).json({
@@ -50,20 +53,23 @@ class BlockController {
   postNewBlock() {
     this.app.post("/block", async (req, res) => {
       try {
-        // define the string script that will be written into block
-        const script = req.body.body
+        // define the star information that will be written into block
+        let script = req.body
+        script.star.story = Buffer(script.star.story).toString('hex')
         // Check if there is any content. No content no new block
-        if (script === undefined || script === '') {
+        if (!script) {
           res.status(400).json({
             success: false,
             message: "Please check your request, which might be empty, undefined, or in a wrong format."
           })
         } else {
           // add new block to the chain
-          const newBlock = new Block(script)
+          let newBlock = new Block(script)
           await blockchain.addBlock(newBlock)
 
-          // verify and return the most recently added block
+          // return the block just added
+          // note: in response we have to add a storyDecoded which won't be saved into the blockchain
+          newBlock.body.star.storyDecoded = hex2ascii(script.star.story)
           res.status(201).send(newBlock)
           }
       } catch (error) {
