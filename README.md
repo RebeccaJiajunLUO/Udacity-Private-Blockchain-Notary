@@ -84,32 +84,3 @@ Step 3) Copy the `message` from the JSON output and use Electrum Wallet to sign 
 Step 4) Copy the `Signature`, `address`, and `message`, then paste them into the body of a request to `/message-signature/validate`
 
 ![Image of POST method to request a validation](https://github.com/chuanqin3/Udacity-Private-Blockchain-Notary/blob/master/InstructionPictures/post-request-validation-intro-5.png)
-
-## Testing simpleChain.js
-
-To test code:
-1. Open a command prompt or shell terminal after install node.js.
-2. Enter a node session, also known as REPL (Read-Evaluate-Print-Loop).
-```
-node
-.load simpleChain.js
-```
-3. The `simpleChain.js` will initiate the blockchain for you, and add 10 blocks after Genesis block
-4. Validate a block, using Genesis block as an example
-```
-chain.validateBlock(0);
-```
-5. Feel free to generate another 10 (or any number you like) blocks using a for loop
-```
-for (var i = 0; i <= 10; i++) {
-  blockchain.addBlock(new Block("test data "+i));
-}
-```
-6. Validate blockchain
-```
-chain.validateChain();
-```
-7. Get Block information
-```
-chain.getBlock(0).then((c)=>{console.log(c)});
-```
