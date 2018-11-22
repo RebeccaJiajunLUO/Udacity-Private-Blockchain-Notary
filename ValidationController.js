@@ -22,7 +22,7 @@ class ValidationController {
     this.app = app;
     this.blocks = [];
     this.mempool = {};
-    this.timeoutRequests = [];
+    this.mempoolValid = [];
     this.requestValidation();
     this.validateSignature();
   }
@@ -99,22 +99,35 @@ class ValidationController {
         const { message, walletAddress, signature } = req.body;
 
         // verify if the request is in the mempool by wallet address, and then verify signature
+        console.log(this.mempool)
         let inMempool =  this.mempool.hasOwnProperty(walletAddress)
         let isValid = null;
         let requestTimeStamp = null;
+        let result = null;
         if (inMempool) {
           requestTimeStamp = this.mempool[walletAddress]
           isValid = bitcoinMessage.verify(message, walletAddress, signature);
-          res.json({
-            registerStar: true,
-            status: {
-              address: walletAddress,
-              requestTimeStamp: requestTimeStamp,
-              message: message,
-              validationWindow: 300,
-              messageSignature: true
+          if (isValid) { // the signature is valid
+            result = {
+              registerStar: true,
+              status: {
+                address: walletAddress,
+                requestTimeStamp: requestTimeStamp,
+                message: message,
+                validationWindow: 200,
+                messageSignature: true
+              }
             }
-          })
+            this.mempoolValid.push(result)
+            console.log(this.mempoolValid)
+
+          } else { // the signature is not valid
+            result = {
+              registerStar: false,
+              message: `Your signature is not valid.`
+            }
+          }
+          res.json(result)
         } else {
           res.status(404).json({
             success: false,
