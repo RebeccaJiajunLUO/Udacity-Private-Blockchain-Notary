@@ -49,13 +49,11 @@ class ValidationController {
 
           // if in Mempool, compare the timestamp. If elapsed time is less than 5 mins, do nothing and return the same messageToSign
           // if not in Mempool, add it to the mempool and issue a new messageToSign
-          let timeElapsed = (new Date().getTime().toString().slice(0,-3)) - this.mempool[address];
-
-          let message = null;
-          let timeLeft = null;
+          let message, timeLeft, timeElapsed;
 
           if (inMempool) {
-            message = address + `:` + this.mempool[address] + `:starRegistry`
+            timeElapsed = (new Date().getTime().toString().slice(0,-3)) - this.mempool[address].requestTimeStamp;
+            message = address + `:` + this.mempool[address].requestTimeStamp + `:starRegistry`
             timeLeft = (TimeoutRequestsWindowTime) - timeElapsed;
           } else {
             message = address + `:` + requestTimeStamp + `:starRegistry`
@@ -66,9 +64,8 @@ class ValidationController {
             setTimeout(() => {
               delete this.mempool[address]
             }, TimeoutRequestsWindowTime*1000);
-
             
-            timeLeft = (TimeoutRequestsWindowTime);
+            timeLeft = TimeoutRequestsWindowTime;
           }
 
           // Send the message to be signed back in JSON format
@@ -98,13 +95,9 @@ class ValidationController {
         const { address, signature } = req.body;
 
         // verify if the request is in the mempool by wallet address, and then verify signature
-        let inMempool =  this.mempool.hasOwnProperty(address)
-        let isValid = null;
-        let requestTimeStamp = null;
-        let timeElapsed = null; 
-        let result = null;
-        let validationWindow = null;
-        let message = null;
+        let inMempool =  this.mempool.hasOwnProperty(address);
+        let isValid, requestTimeStamp, timeElapsed, result, validationWindow, message;
+
         if (inMempool) { // address found in the mempool
           requestTimeStamp = this.mempool[address].requestTimeStamp
           timeElapsed = (new Date().getTime().toString().slice(0,-3)) - requestTimeStamp;
@@ -151,7 +144,7 @@ class ValidationController {
   postNewBlock() {
     this.app.post("/block", async (req, res) => {
       try {
-        // define the star information that will be written into block
+        // define the star information that will be written into block and validate them
         let script = req.body
 
         // Check if there is any content. No content no new block
@@ -161,13 +154,33 @@ class ValidationController {
             message: "Please check your request, which might be empty, undefined, or in a wrong format."
           })
         } else {
+          // check if dec, ra, and story are valid
+          let storyTooLong = script.star.story.length > 250 ? true : false
+          let dec = script.star.dec
+          let ra = script.star.ra
+
+          if (storyTooLong) {
+            throw "Your story exceeds the limit of 250 words"
+          }
+
+          if (!dec || !ra) {
+            throw "Your star dec or ra is wrong. Plesae check"
+          }
+
           // verify if the address has passed the validation earlier
           let addressVerified = false;
+          let newMempoolValid = [];
           this.mempoolValid.forEach((each) => {
             if (script.address === each.status.address) {
               addressVerified = true;
+            } else {
+              newMempoolValid.push(each);
             }
           })
+          // update mempoolValid because one validation can register only one star
+          // if address not found in mempoolValid, mempoolValid = newMempoolValid anyway
+          // if address found in mempoolValid, newMempoolValid take out that address
+          this.mempoolValid = newMempoolValid
 
           if (addressVerified) {
             // hex coded the story
@@ -175,7 +188,7 @@ class ValidationController {
             // add new block to the chain
             let newBlock = new Block(script)
             await blockchain.addBlock(newBlock)
-
+            
             // return the block just added
             // note: in response we have to add a storyDecoded which won't be saved into the blockchain
             newBlock.body.star.storyDecoded = hex2ascii(script.star.story)
@@ -183,7 +196,7 @@ class ValidationController {
             } else {
               res.status(400).json({
                 success: false,
-                message: `Your address is not valid. Please go to \requestValidation to start the process.`
+                message: `Your address is not valid or expired. Please go to requestValidation to start the process.`
               })
             }
           }
