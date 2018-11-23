@@ -58,14 +58,16 @@ class ValidationController {
             message = address + `:` + this.mempool[address] + `:starRegistry`
             timeLeft = (TimeoutRequestsWindowTime) - timeElapsed;
           } else {
+            message = address + `:` + requestTimeStamp + `:starRegistry`
+
             // add address to the mempool
-            this.mempool[address] = requestTimeStamp
+            this.mempool[address] = {message, requestTimeStamp}
             // remove the address from mempool after 5 minutes
             setTimeout(() => {
               delete this.mempool[address]
             }, TimeoutRequestsWindowTime*1000);
 
-            message = address + `:` + requestTimeStamp + `:starRegistry`
+            
             timeLeft = (TimeoutRequestsWindowTime);
           }
 
@@ -93,7 +95,7 @@ class ValidationController {
     this.app.post("/message-signature/validate", async (req, res) => {
       try {
         // parse information from the request body
-        const { message, address, signature } = req.body;
+        const { address, signature } = req.body;
 
         // verify if the request is in the mempool by wallet address, and then verify signature
         let inMempool =  this.mempool.hasOwnProperty(address)
@@ -102,10 +104,12 @@ class ValidationController {
         let timeElapsed = null; 
         let result = null;
         let validationWindow = null;
+        let message = null;
         if (inMempool) { // address found in the mempool
-          requestTimeStamp = this.mempool[address]
+          requestTimeStamp = this.mempool[address].requestTimeStamp
           timeElapsed = (new Date().getTime().toString().slice(0,-3)) - requestTimeStamp;
           validationWindow = 5*60 - timeElapsed
+          message = this.mempool[address].message
           isValid = bitcoinMessage.verify(message, address, signature);
           if (isValid) { // the signature is valid
             result = {
