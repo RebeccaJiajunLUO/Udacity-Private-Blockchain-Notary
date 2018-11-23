@@ -29,13 +29,13 @@ class ValidationController {
     this.app.post("/requestValidation", async (req, res) => {
       try {
         // retrieve the address from request
-        const walletAddress = req.body.walletAddress;
+        const address = req.body.address;
         // the request should be available for validation for 5 mins (to milliseconds); aka stay in mempool for 5 mins
         // If the user re-submits the same request, the app will return the same request that it is already in the mempool
         const TimeoutRequestsWindowTime = 5*60;
 
         // check if walletAddress from request is valid
-        if (!walletAddress) {
+        if (!address) {
           res.status(400).json({
             success: false,
             message: "Please check your request, which might be empty, undefined, or in a wrong format."
@@ -45,34 +45,36 @@ class ValidationController {
           const requestTimeStamp = new Date().getTime().toString().slice(0, -3);
 
           // check if the request is in the mempool already
-          let inMempool =  this.mempool.hasOwnProperty(walletAddress)
+          let inMempool =  this.mempool.hasOwnProperty(address)
 
           // if in Mempool, compare the timestamp. If elapsed time is less than 5 mins, do nothing and return the same messageToSign
           // if not in Mempool, add it to the mempool and issue a new messageToSign
-          let timeElapsed = (new Date().getTime().toString().slice(0,-3)) - this.mempool[walletAddress];
+          let timeElapsed = (new Date().getTime().toString().slice(0,-3)) - this.mempool[address];
 
-          let messageToSign = null;
+          let message = null;
           let timeLeft = null;
 
           if (inMempool) {
-            messageToSign = walletAddress + `:` + this.mempool[walletAddress] + `:starRegistry`
+            message = address + `:` + this.mempool[address] + `:starRegistry`
             timeLeft = (TimeoutRequestsWindowTime) - timeElapsed;
           } else {
             // add address to the mempool
-            this.mempool[walletAddress] = requestTimeStamp
+            this.mempool[address] = requestTimeStamp
             // remove the address from mempool after 5 minutes
             setTimeout(() => {
-              delete this.mempool[walletAddress]
+              delete this.mempool[address]
             }, TimeoutRequestsWindowTime*1000);
 
-            messageToSign = walletAddress + `:` + requestTimeStamp + `:starRegistry`
+            message = address + `:` + requestTimeStamp + `:starRegistry`
             timeLeft = (TimeoutRequestsWindowTime);
           }
 
           // Send the message to be signed back in JSON format
           res.json({
-            messageToSign: messageToSign,
-            validationWindow: timeLeft + " seconds left"
+            address: address,
+            requestTimeStamp: requestTimeStamp,
+            message: message,
+            validationWindow: timeLeft
           })
         }
       } catch (error) {
@@ -91,25 +93,29 @@ class ValidationController {
     this.app.post("/message-signature/validate", async (req, res) => {
       try {
         // parse information from the request body
-        const { message, walletAddress, signature } = req.body;
+        const { message, address, signature } = req.body;
 
         // verify if the request is in the mempool by wallet address, and then verify signature
-        let inMempool =  this.mempool.hasOwnProperty(walletAddress)
+        let inMempool =  this.mempool.hasOwnProperty(address)
         let isValid = null;
         let requestTimeStamp = null;
+        let timeElapsed = null; 
         let result = null;
+        let validationWindow = null;
         if (inMempool) { // address found in the mempool
-          requestTimeStamp = this.mempool[walletAddress]
-          isValid = bitcoinMessage.verify(message, walletAddress, signature);
+          requestTimeStamp = this.mempool[address]
+          timeElapsed = (new Date().getTime().toString().slice(0,-3)) - requestTimeStamp;
+          validationWindow = 5*60 - timeElapsed
+          isValid = bitcoinMessage.verify(message, address, signature);
           if (isValid) { // the signature is valid
             result = {
               registerStar: true,
               status: {
-                address: walletAddress,
+                address: address,
                 requestTimeStamp: requestTimeStamp,
                 message: message,
-                validationWindow: 200,
-                messageSignature: true
+                validationWindow: validationWindow,
+                messageSignature: "valid"
               }
             }
             this.mempoolValid.push(result)
