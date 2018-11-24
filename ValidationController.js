@@ -42,7 +42,7 @@ class ValidationController {
           })
         } else {
           // set up the current timestamp
-          const requestTimeStamp = new Date().getTime().toString().slice(0, -3);
+          let requestTimeStamp;
 
           // check if the request is in the mempool already
           let inMempool =  this.mempool.hasOwnProperty(address)
@@ -52,14 +52,20 @@ class ValidationController {
           let message, timeLeft, timeElapsed;
 
           if (inMempool) {
-            timeElapsed = (new Date().getTime().toString().slice(0,-3)) - this.mempool[address].requestTimeStamp;
-            message = address + `:` + this.mempool[address].requestTimeStamp + `:starRegistry`
+            // retrieve the request time stamp saved in the mempool and calculate time left for the window
+            requestTimeStamp = this.mempool[address].requestTimeStamp
+            timeElapsed = (new Date().getTime().toString().slice(0,-3)) - requestTimeStamp;
             timeLeft = (TimeoutRequestsWindowTime) - timeElapsed;
-          } else {
+            // set the message that will be sent back to the requestor
             message = address + `:` + requestTimeStamp + `:starRegistry`
-
+          } else {
+            // assign a new request time stap
+            requestTimeStamp = new Date().getTime().toString().slice(0, -3);
+            // set the message that will be sent back to the requestor
+            message = address + `:` + requestTimeStamp + `:starRegistry`
             // add address to the mempool
             this.mempool[address] = {message, requestTimeStamp}
+
             // remove the address from mempool after 5 minutes
             setTimeout(() => {
               delete this.mempool[address]
@@ -145,7 +151,8 @@ class ValidationController {
     this.app.post("/block", async (req, res) => {
       try {
         // define the star information that will be written into block and validate them
-        let script = req.body
+        let script = req.body;
+        let isASCII;
 
         // Check if there is any content. No content no new block
         if (!script) {
@@ -155,9 +162,18 @@ class ValidationController {
           })
         } else {
           // check if dec, ra, and story are valid
-          let storyTooLong = script.star.story.length > 250 ? true : false
+          let storyTooLong = script.star.story.length > 500 ? true : false
           let dec = script.star.dec
           let ra = script.star.ra
+
+          if (!script.star.story) {
+            throw "Your story seems to be empty, please double check."
+          }
+
+          isASCII = /^[\x00-\x7F]*$/.test(script.star.story)
+          if (!isASCII) {
+            throw "Your story should contain only ASCII characters!"
+          }
 
           if (storyTooLong) {
             throw "Your story exceeds the limit of 250 words"
@@ -180,7 +196,9 @@ class ValidationController {
           // update mempoolValid because one validation can register only one star
           // if address not found in mempoolValid, mempoolValid = newMempoolValid anyway
           // if address found in mempoolValid, newMempoolValid take out that address
+          // Update: also expire the address from mempool, force the user to resubmit another validation session
           this.mempoolValid = newMempoolValid
+          delete this.mempool[script.address]
 
           if (addressVerified) {
             // hex coded the story
